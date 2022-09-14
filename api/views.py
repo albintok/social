@@ -49,10 +49,9 @@ class LoginView(ViewSet):
         serializer=UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            if user:
-                return Response(data=serializer.data)
-            else:
-                return Response(data=serializer.errors)
+            return Response(data=serializer.data)
+        else:
+            return Response(data=serializer.errors)
 class PostmodelView(ModelViewSet):
     serializer_class = PostSerializer
     queryset = Posts.objects.all()
