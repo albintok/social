@@ -19,8 +19,8 @@ from api import views
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import ObtainAuthToken
 router=DefaultRouter()
-router.register("api/v1/posts",views.PostView,basename="posts")
-router.register("accounts/signup",views.LoginView,basename="login")
+router.register("api/v1/posts",views.PostsView,basename="posts")
+router.register("accounts/signup",views.UserView,basename="login")
 router.register("api/v2/posts",views.PostmodelView,basename="mposts")
 urlpatterns = [
     path('admin/', admin.site.urls),
