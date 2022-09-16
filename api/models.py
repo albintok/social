@@ -5,8 +5,9 @@ class Posts(models.Model):
     title=models.CharField(max_length=20)
     description=models.CharField(max_length=50)
     image=models.ImageField(null=True,upload_to="imageupload")
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    user=models.ForeignKey(User,on_delete=models.CASCADE,related_name="post")
     date=models.DateTimeField(auto_now_add=True)
+    liked_by=models.ManyToManyField(User)
 
     def __str__(self):
         return self.title

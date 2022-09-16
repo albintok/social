@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ViewSet,ModelViewSet
 from rest_framework.response import Response
-from api.models import Posts,Comments
+from api.models import Posts
 from api.serializer import PostSerializer,UserSerializer,CommentSerializer
 from rest_framework import authentication,permissions
 from rest_framework.decorators import action
@@ -80,12 +80,25 @@ class PostmodelView(ModelViewSet):
     @action(methods=["GET"],detail=False)
     def my_posts(self,request,*args,**kwargs):
         user=request.user
-        qs=user.posts_set.all()
+        qs=user.post.all()
         serializer=PostSerializer(qs,many=True)
         return Response(data=serializer.data)
-    def add_comment(self,request,*args,**kwargs):
-        id=kwargs.get("id")
+    @action(methods=["GET"],detail=True)
+    def get_comment(self,request,*args,**kwargs):
+        id=kwargs.get("pk")
         post=Posts.objects.get(id=id)
-        commet=request.data.get("comment")
-        post.comment_set.create(comment=commet,user=request.user,post=post)
+        commet=post.comments_set.all()
+        serilizer=CommentSerializer(commet,many=True)
+        return Response(data=serilizer.data)
+    @action(methods=["POST"],detail=True)
+    def add_comment(self,request,*args,**kwargs):
+        id=kwargs.get("pk")
+        pst=Posts.objects.get(id=id)
+        serializer=CommentSerializer(data=request.data,context={"user":request.user,"post":pst})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data)
+        else:
+            return Response(data=serializer.errors)
+
 

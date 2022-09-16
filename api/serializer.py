@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Posts,comments
+from api.models import Posts,Comments
 from django.contrib.auth.models import User
 class PostSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
@@ -21,6 +21,11 @@ class UserSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     id=serializers.CharField(read_only=True)
     user=serializers.CharField(read_only=True)
+    post=serializers.CharField(read_only=True)
     class Meta:
-        model=comments
-        fields="__all__"
+        model=Comments
+        fields=["id","post","comment","user"]
+    def create(self, validated_data):
+        user=self.context.get("user")
+        post=self.context.get("post")
+        return Comments.objects.create(**validated_data,user=user,post=post)
